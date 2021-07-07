@@ -46,9 +46,137 @@ TBD
 
 ## Quick Start Guide
 
-- How to Flash Amlogic image to eMMC
+TBD
 
 ## Quick Dev Guide
+
+### Boot Order
+- Check if USB Boot button is pressed, if yes, go to USB Boot, if no, go to next
+- Check if eMMC is bootable, if yes, boot from eMMC
+- Check if uSD card is bootable, if yes, boot from uSD card
+
+### Serial Console
+Connect the cable as below picture:
+
+![radxa_zero](./additional-docs/images/guide/zero-serial-console.jpg)
+
+Edit a new `~/.minirc.zero` file with the following content:
+
+<pre>
+pu escape-key       ^Z
+pu port             /dev/tty.usbserial-110  #change this to your USB to TTL name
+pu baudrate         115200
+pu bits             8
+pu parity           N
+pu stopbits         1
+pu rtscts           No
+pu histlines        100000
+pu logfname         /tmp/minicom.log
+</pre>
+
+Open terminal and use **minicom** to connect serial console:
+
+    minicom zero
+
+
+
+
+### Erase default Amlogic Android
+- Press and hold the USB Boot button, plug the USB A to C to PC
+
+In serial console, you should see:
+
+    G12A:BL:0253b8:61aa2d;FEAT:E0F83180:2000;POC:D;RCY:0;USB:0;0.0
+
+On PC, lsusb should show the followling VID/PID:
+
+    Bus 002 Device 030: ID 1b8e:c003 Amlogic, Inc. GX-CHIP
+
+This means the Zero is in USB Boot mode
+
+- Use `pyamlboot` to load the fastboot loader from USB
+
+`pyamlboot` is a tool by [@superna9999](https://github.com/superna9999/pyamlboot) for Amlogic USB Boot. To install it:
+
+    pip3 install pyamlboot
+
+Download the prebuilt fastboot loader:
+
+    wget https://dl.radxa.com/zero/images/loader/rz-fastboot-loader.bin
+    boot-g12.py rz-fastboot-loader.bin
+
+It should output
+<pre>
+Firmware Version :
+ROM: 3.2 Stage: 0.0
+Need Password: 0 Password OK: 1
+Writing rz-fastboot-loader.bin at 0xfffa0000...
+[DONE]
+Running at 0xfffa0000...
+[DONE]
+AMLC dataSize=16384, offset=65536, seq=0...
+[DONE]
+AMLC dataSize=49152, offset=393216, seq=1...
+[DONE]
+AMLC dataSize=16384, offset=229376, seq=2...
+[DONE]
+AMLC dataSize=49152, offset=245760, seq=3...
+[DONE]
+AMLC dataSize=49152, offset=294912, seq=4...
+[DONE]
+AMLC dataSize=16384, offset=65536, seq=5...
+[DONE]
+AMLC dataSize=1406320, offset=81920, seq=6...
+[DONE]
+[BL2 END]
+</pre>
+Now the Zero is in fastboot mode.
+
+    $ lsusb
+    Bus 002 Device 032: ID 18d1:fada Google Inc. USB download gadget  Serial: AMLG12A-RADXA-ZERO
+
+Use fastboot to erase the eMMC
+
+    $ fastboot devices
+    AMLG12A-RADXA-ZERO	fastboot
+    $ fastboot erase bootloader
+    Erasing 'bootloader'                               OKAY [  3.601s]
+    Finished. Total time: 3.613s
+    $ fastboot erase bootenv
+    fastboot erase bootenv
+    Erasing 'bootenv'                                  OKAY [  0.097s]
+    Finished. Total time: 0.110s
+
+Now erase the eMMC user partition from offset 0:
+
+    fastboot erase 0
+    Erasing '0'                                        OKAY [ 17.574s]
+    Finished. Total time: 17.586s
+
+- The eMMC is completely wiped now, unplug and plug the USB C cable. Insert a bootable uSD card, the Zero should boot from it.
+
+
+### Write images to eMMC from PC
+- Boot the Zero to USB Boot mode
+
+- Download and run the prebuilt USB Disk loader
+
+    $ wget https://dl.radxa.com/zero/images/loader/rz-udisk-loader.bin
+
+    $ boot-g12.py rz-udisk-loader.bin
+    
+    $ lsusb
+    
+    Bus 002 Device 004: ID 18d1:fada Google Inc. USB download gadget  Serial: AMLG12A-RADXA-ZERO
+
+The PC should show a USB Disk device, which is the eMMC of Zero.
+
+- Write the u-boot.bin to eMMC
+
+    $ sudo dd if=u-boot.bin of=/dev/sdx of=/dev/sdx bs=512 seek=1
+
+- Unplug and plug USB C, Zero should boot from u-boot in eMMC
+
 
 ### Android
 
@@ -62,4 +190,3 @@ TBD
 
 
 
-## 
