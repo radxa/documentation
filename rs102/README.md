@@ -38,22 +38,18 @@ Note: external antenna version(T variant) also available.
 
 ## PINOUT
 
-
-
-TBD
-
-
+https://wiki.radxa.com/Zero/hardware/gpio
 
 ## Quick Start Guide
 
-TBD
+https://wiki.radxa.com/Zero/getting_started
 
 ## Quick Dev Guide
 
 ### Boot Order
-- Check if USB Boot button is pressed, if yes, go to USB Boot, if no, go to next
+- Check if USB Boot button is pressed, if yes, go to USB Boot(maskrom mode), if no, go to next
 - Check if eMMC is bootable, if yes, boot from eMMC
-- Check if uSD card is bootable, if yes, boot from uSD card
+- Check if uSD card is bootable, if yes, boot from uSD card, if no, go to USB Boot(maskrom mode)
 
 ### Serial Console
 Connect the cable as below picture:
@@ -79,9 +75,8 @@ Open terminal and use **minicom** to connect serial console:
     minicom zero
 
 
-
-
 ### Erase default Amlogic Android
+
 - Press and hold the USB Boot button, plug the USB A to C to PC
 
 In serial console, you should see:
@@ -102,8 +97,8 @@ This means the Zero is in USB Boot mode
 
 Download the prebuilt fastboot loader:
 
-    wget https://dl.radxa.com/zero/images/loader/rz-fastboot-loader.bin
-    boot-g12.py rz-fastboot-loader.bin
+    wget https://dl.radxa.com/zero/images/loader/factory-loader.img
+    boot-g12.py factory-loader.img
 
 It should output
 <pre>
@@ -137,21 +132,11 @@ Now the Zero is in fastboot mode.
 
 Use fastboot to erase the eMMC
 
-    $ fastboot devices
-    AMLG12A-RADXA-ZERO	fastboot
-    $ fastboot erase bootloader
-    Erasing 'bootloader'                               OKAY [  3.601s]
-    Finished. Total time: 3.613s
-    $ fastboot erase bootenv
-    fastboot erase bootenv
-    Erasing 'bootenv'                                  OKAY [  0.097s]
-    Finished. Total time: 0.110s
-
-Now erase the eMMC user partition from offset 0:
-
-    fastboot erase 0
-    Erasing '0'                                        OKAY [ 17.574s]
-    Finished. Total time: 17.586s
+   sudo fastboot flashing unlock_critical
+   sudo fastboot flashing unlock
+   sudo fastboot erase bootloader
+   sudo fastboot erase bootloader-boot0
+   sudo fastboot erase bootloader-boot1
 
 - The eMMC is completely wiped now, unplug and plug the USB C cable. Insert a bootable uSD card, the Zero should boot from it.
 
@@ -171,9 +156,11 @@ Now erase the eMMC user partition from offset 0:
 
 The PC should show a USB Disk device, which is the eMMC of Zero.
 
-- Write the u-boot.bin to eMMC
+- Write the image to eMMC
 
-    $ sudo dd if=u-boot.bin of=/dev/sdx of=/dev/sdx bs=512 seek=1
+Download the image from: https://wiki.radxa.com/Zero/downloads
+
+    $ sudo dd if=/path/to/image of=/dev/sdx of=/dev/sdx bs=1M conv=sync
 
 - Unplug and plug USB C, Zero should boot from u-boot in eMMC
 
