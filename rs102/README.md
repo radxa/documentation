@@ -21,18 +21,23 @@ Brief Specification as below:
 
 ## Models
 
-| Model  | RAM   | eMMC      | WiFi/BT   |
-| ------ | ----- | --------- | --------- |
-| D0     | 512MB | N/A       | WiFi4/BT4 |
-| D1     | 1GB   | N/A       | WiFi4/BT4 |
-| D2E8   | 2GB   | 8GB       | WiFi5/BT5 |
-| D4E16  | 4GB   | 16GB      | WiFi5/BT5 |
-| D4E32  | 4GB   | **32GB**  | WiFi5/BT5 |
-| D4E64  | 4GB   | **64GB**  | WiFi5/BT5 |
-| D4E128 | 4GB   | **128GB** | WiFi5/BT5 |
-|        |       |           |           |
+- H for with gpio header
+- T for external antenna
 
-Note: external antenna version(T variant) also available.
+|      SKU      |  RAM  |  eMMC | WiFi/BT | GPIO Header |  Antenna | Note |
+|:-------------:|:-----:|:-----:|:-------:|:-----------:|:--------:|:----:|
+| RS102-D0H     | 512MB | -     | AP6212  | Yes         | on board | 🔴    |
+| RS102-D1H     | 1GB   | -     | AP6212  | Yes         | on board | 🟠    |
+| RS102-D2E8H   | 2GB   | 8GB   | AP6256  | Yes         | on board | 🟡    |
+| RS102-D2E8T   | 2GB   | 8GB   | AP6256  | No          | external | 🟡    |
+| RS102-D4E16H  | 4GB   | 16GB  | AP6256  | Yes         | on board | 🟢    |
+| RS102-D4E16T  | 4GB   | 16GB  | AP6256  | No          | external | 🟢    |
+| RS102-D4E32H  | 4GB   | 32GB  | AP6256  | Yes         | on board | ⚫️    |
+| RS102-D4E32T  | 4GB   | 32GB  | AP6256  | No          | external | ⚫️    |
+| RS102-D4E64H  | 4GB   | 64GB  | AP6256  | Yes         | on board | 🔵    |
+| RS102-D4E64T  | 4GB   | 64GB  | AP6256  | No          | external | 🔵    |
+| RS102-D4E128H | 4GB   | 128GB | AP6256  | Yes         | on board | 🟣    |
+| RS102-D4E128T | 4GB   | 128GB | AP6256  | No          | external | 🟣    |
 
 
 
